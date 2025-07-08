@@ -1,10 +1,27 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState, ReactNode } from "react";
 import { Todo } from "../lib/types";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 
-export const TodosContext = createContext(null);
+// 1. Context tipi tanımı
+type TodosContextType = {
+  todos: Todo[];
+  isLoading: boolean;
+  totalCount: number;
+  completedCount: number;
+  addTodo: (content: string) => void;
+  toggleTodo: (id: number) => void;
+  deleteTodo: (id: number) => void;
+};
 
-export default function TodosContextProvider({ children }) {
+// 2. Context oluşturuluyor
+export const TodosContext = createContext<TodosContextType | undefined>(undefined);
+
+// 3. Provider bileşeni tipi
+type Props = {
+  children: ReactNode;
+};
+
+export default function TodosContextProvider({ children }: Props) {
   const { isAuthenticated } = useKindeAuth();
 
   // state
@@ -15,9 +32,8 @@ export default function TodosContextProvider({ children }) {
   const totalCount = todos.length;
   const completedCount = todos.filter((todo) => todo.completed).length;
 
-  // actions / event handlers
-  const addTodo = (content) => {
-    // check if user is logged in
+  // actions
+  const addTodo = (content: string) => {
     if (todos.length >= 3 && !isAuthenticated) {
       alert("To add more todos, please log in.");
       return;
@@ -32,14 +48,16 @@ export default function TodosContextProvider({ children }) {
       },
     ]);
   };
-  const toggleTodo = (id) => {
+
+  const toggleTodo = (id: number) => {
     setTodos(
       todos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
       )
     );
   };
-  const deleteTodo = (id) => {
+
+  const deleteTodo = (id: number) => {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
@@ -48,11 +66,9 @@ export default function TodosContextProvider({ children }) {
     const fetchTodos = async () => {
       setIsLoading(true);
 
-      const response = await fetch(
-        "https://bytegrad.com/course-assets/api/todos"
-      );
-      const todos = await response.json();
-      setTodos(todos);
+      const response = await fetch("https://bytegrad.com/course-assets/api/todos");
+      const data: Todo[] = await response.json();
+      setTodos(data);
 
       setIsLoading(false);
     };

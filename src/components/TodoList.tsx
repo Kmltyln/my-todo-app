@@ -33,7 +33,7 @@ export default function TodoList() {
               {todo.content}
             </span>
 
-            <DeleteButton id={todo.id} />
+            <DeleteButton id={todo.id.toString()} />
           </li>
         );
       })}

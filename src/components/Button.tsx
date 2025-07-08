@@ -1,4 +1,12 @@
-export default function Button({ buttonType, onClick, children }) {
+import { ReactNode, MouseEventHandler } from "react";
+
+type ButtonProps = {
+  buttonType?: "primary" | "secondary";
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  children: ReactNode;
+};
+
+export default function Button({ buttonType, onClick, children }: ButtonProps) {
   return (
     <button
       onClick={onClick}
