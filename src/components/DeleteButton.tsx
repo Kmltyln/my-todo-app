@@ -1,17 +1,17 @@
 import { useTodosContext } from "../lib/hooks";
 
-interface DeleteButtonProps {
-  id: string; // or 'number' if your id is a number
-}
+type DeleteButtonProps = {
+  id: string | number;
+};
 
 export default function DeleteButton({ id }: DeleteButtonProps) {
-  const { deleteTodo } = useTodosContext();
+  const { deleteTodo } = useTodosContext() as { deleteTodo: (id: number) => void };
 
   return (
     <button
       onClick={(e) => {
         e.stopPropagation();
-        deleteTodo(Number(id));
+        deleteTodo(typeof id === "number" ? id : Number(id));
       }}
     >
       ❌
